@@ -1,0 +1,82 @@
+---
+title: "2 Column Rmarkdown template"
+author: Me^\(\dagger\),\(\S\)^, Her^\(\ddagger\)^, Him^\(\dagger\)^, Them^\(\ddagger\)^
+header-includes:
+  - \usepackage{wrapfig}
+  - \usepackage{lipsum}
+  - \newcommand{\bcenter}{\begin{center}}
+  - \newcommand{\ecenter}{\end{center}}
+  - \usepackage{caption}
+geometry: margin=1.5cm
+abstract: Here you can add a bunch of text for your abstract, it will be formatted independently from the rest of the document, so you can't use as many of the tricks you'd use in markdown, but you can write in \textit{italics}, \textbf{bold} and \textcolor{red}{different} \textcolor{blue}{colors}.
+output:
+  rmarkdown::pdf_document:
+    extra_dependencies: ["xcolor"]
+    latex_engine: xelatex
+    keep_tex: true
+    fig_caption: yes   
+#bibliography: references.bib ###IF YOU WANT TO ADD CUSTOM BIBLIOGRAPHY
+#csl: nature-neuroscience.csl ###IF YOU WANT A PARTICULAR JOURNAL STYLE
+classoption:
+- twocolumn
+bibliography: references.bib
+---
+
+## Section Title
+
+Here is some text, you can type as you would in any other program, in this case we've set up the formatting to make this 2-lines. You can add citations[@Brahmi2006] by searching Pubmed for example using the embedded tools in Rstudio. The code above makes it so you can do custom aligning of figures.
+
+The great thing about Rmd writing is you can include R code inline, which will keep things up to date when your data or other things change. For example, if you've 'knitted' this document today, then the date is `r date()`.
+
+Other things you can do might involve more complicated code in a code chunk like a plot. For example:
+
+```{r eval=TRUE, echo = FALSE, fig.cap = "Here we can write the caption for the figure, for super long captions you might not want to use this approach"}
+curve(x^2-2*x+12,-2,2, main = "This is a plot of a function")
+```
+
+Other words, Other words, Other words, Other words, Other words, Other words, Other words, Other words, Other words, Other words, Other words, Other words, Other words, Other words, Other words, Other words, Other words, Other words, Other words, Other words, Other words, Other words, Other words, Other words, Other words, Other words, Other words, Other words, Other words, Other words, Other words, Other words, Other words, Other words, Other words, Other words, Other words, Other words, Other words, Other words, Other words, Other words, Other words, Other words, Other words, Other words, Other words, Other words, Other words, Other words, Other words, Other words, Other words, Other words, Other words, Other words, Other words, Other words, Other words, Other words, Other words, Other words, Other words, Other words, Other words, Other words, Other words, Other words, Other words, Other words, Other words, Other words, Other words, Other words, Other words, Other words, Other words, Other words, Other words, Other words, Other words, Other words, Other words, Other words, Other words, Other words, Other words, Other words, Other words, Other words, Other words, Other words, Other words, Other words, Other words, Other words, Other words, Other words, Other words, Other words, Other words, Other words, Other words, Other words, Other words, Other words, Other words, Other words.
+
+## Another Section title
+
+Here, maybe you want to pull in some example data and run a plot on it. We can run some code in the background, save the data to a folder, then load it back in to plot:
+
+```{r eval=TRUE, echo = FALSE, message = FALSE, fig.cap = "This is the caption, here you can see the length and width are correlated, but noisy"}
+library(tidyverse)
+theme_set(theme_classic())
+fake.data <- tibble(Age = c(rep("1 Day", 50), 
+                            rep("4 Day", 50)),
+                    Length = rnorm(1, sd = .2, n = 100),
+                    Noise  = c(rnorm(0, .05, n = 50),
+                               rnorm(0.1, .05, n = 50)),
+                    Width  = (Length*0.2 + Noise))
+ggplot(fake.data,
+       aes(x = Length,
+           y = Width))+
+  geom_point(alpha = 0.5) +
+  geom_smooth(method = "lm") +
+  labs(title = "Is length correlated with width?") +
+  theme(plot.title = element_text(face = "bold", hjust = 0.5))
+
+write_csv(fake.data, "data/fake.data.csv")
+```
+
+So maybe we concluded that the effect was real but maybe a bit weak. And then we blathered about it for a while.... blather, blather, blather, blather, blather, blather, blather, blather, blather, blather, blather, blather, blather, blather, blather, blather, blather, blather, blather, blather, blather, blather, blather, blather, blather, blather, blather, blather, blather, blather, blather, blather, blather, blather, blather, blather, blather, blather, blather, blather, blather, blather, blather, blather, blather, blather, blather, blather, blather, blather, blather, blather, blather, blather, blather, blather, blather, blather, blather, blather, blather, blather, blather, blather, blather, blather, blather, blather, blather, blather.
+
+## But is there another factor involved?
+
+So we realized that some of our animals were 1 day old and some were 4 days old, could this have any effect on the length vs. width that we previously analyzed? Luckily we saved the simulated data and can load it back in, this time considering `Age`.
+
+```{r, eval=TRUE, echo = FALSE, message = FALSE, fig.cap = "Now when we look at age, it has a clear effect"}
+fake.data <- read_csv("data/fake.data.csv")
+
+ggplot(fake.data,
+       aes(x = Length,
+           y = Width))+
+  geom_point(alpha = 0.5, aes(colour = Age)) +
+  geom_smooth(method = "lm", aes(group = Age, colour = Age)) +
+  labs(title = "Is length correlated with width?") +
+  theme(plot.title = element_text(face = "bold", hjust = 0.5))
+
+```
+
+So that's it.
